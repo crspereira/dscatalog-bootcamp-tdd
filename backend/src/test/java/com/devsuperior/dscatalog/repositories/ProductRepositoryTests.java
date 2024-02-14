@@ -33,6 +33,26 @@ public class ProductRepositoryTests {
 	}
 	
 	@Test
+	public void findByIdShouldReturnOptionalProductNotEmpytWhenIdExists() {
+		//Arrange
+		//Long nonExistingId = 0L;
+		//Acting
+		Optional<Product> result = productRepository.findById(existingId);
+		//Assert
+		Assertions.assertTrue(result.isPresent());
+	}
+	
+	@Test
+	public void findByIdShouldReturnOptionalProductEmpytWhenIdDoesNotExists() {
+		//Arrange
+		//Long existingId = 1L;
+		//Acting
+		Optional<Product> result = productRepository.findById(nonExistingId);
+		//Assert
+		Assertions.assertTrue(result.isEmpty());
+	}
+	
+	@Test
 	public void saveShouldPersistWithAutoIncrementWhenIdIsNull() {
 		//Arrange
 		Product product = ProductFactory.createNewProduct();
