@@ -69,6 +69,7 @@ public class ProductServiceTests {
 		    products = new PageImpl<>(List.of(product)); //classe concreta do Page
 		    newProduct = ProductFactory.createNewProduct();
 		    category = CategoryFactory.createNewCategory();
+		    
 		// ## Configurando os comportamentos simulados do Product Repository
 		    Mockito.when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
 		    Mockito.when(productRepository.findById(nonExistingId)).thenReturn(Optional.empty());
