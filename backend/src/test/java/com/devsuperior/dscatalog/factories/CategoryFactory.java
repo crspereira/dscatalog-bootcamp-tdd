@@ -10,7 +10,7 @@ public class CategoryFactory {
 		return category;
 	}
 	
-	public static CategoryDTO creteNewCategoryDTO() {
+	public static CategoryDTO createNewCategoryDTO() {
 		Category category = createNewCategory();
 		CategoryDTO categoryDTO = new CategoryDTO(category);
 		return categoryDTO;

@@ -25,16 +25,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.devsuperior.dscatalog.dto.ProductDTO;
-import com.devsuperior.dscatalog.factories.ProductFactory;
-import com.devsuperior.dscatalog.resourses.ProductResource;
-import com.devsuperior.dscatalog.services.ProductService;
+import com.devsuperior.dscatalog.dto.CategoryDTO;
+import com.devsuperior.dscatalog.factories.CategoryFactory;
+import com.devsuperior.dscatalog.resourses.CategoryResource;
+import com.devsuperior.dscatalog.services.CategoryService;
 import com.devsuperior.dscatalog.services.execeptions.DatabaseException;
 import com.devsuperior.dscatalog.services.execeptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(ProductResource.class)
-public class ProductResourceTests {
+@WebMvcTest(CategoryResource.class)
+public class CategoryResourceTests {
 
 	// Mocka as requisições
 	@Autowired
@@ -42,7 +42,7 @@ public class ProductResourceTests {
 
 	// Mocka as dependencias com alguns beans de sistema
 	@MockBean
-	private ProductService service;
+	private CategoryService service;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -51,26 +51,26 @@ public class ProductResourceTests {
 	private long existingId;
 	private long nonExistingId;
 	private long dependentId;
-	private ProductDTO productDTO;
-	private PageImpl<ProductDTO> pageProductDTO; // PageImpl Objeto concreto da Interface Page
+	private CategoryDTO categoryDTO;
+	private PageImpl<CategoryDTO> pageCategoryDTO; // PageImpl Objeto concreto da Interface Page
 
 	@BeforeEach
 	void setup() throws Exception {
 		existingId = 1L;
 		nonExistingId = 0L;
 		dependentId = 2L;
-		productDTO = ProductFactory.creteNewProductDTO();
-		pageProductDTO = new PageImpl<>(List.of(productDTO));
+		categoryDTO = CategoryFactory.createNewCategoryDTO();
+		pageCategoryDTO = new PageImpl<>(List.of(categoryDTO));
 
-		// ## Configurando os comportamentos simulados do ProductService
-		Mockito.when(service.findAllPaged(ArgumentMatchers.any())).thenReturn(pageProductDTO);
+		// ## Configurando os comportamentos simulados do CategoryService
+		Mockito.when(service.findAllPaged(ArgumentMatchers.any())).thenReturn(pageCategoryDTO);
 
-		Mockito.when(service.findById(existingId)).thenReturn(productDTO);
+		Mockito.when(service.findById(existingId)).thenReturn(categoryDTO);
 		Mockito.when(service.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
 		
-		Mockito.when(service.insert(ArgumentMatchers.any())).thenReturn(productDTO);
+		Mockito.when(service.insert(ArgumentMatchers.any())).thenReturn(categoryDTO);
 
-		Mockito.when(service.update(ArgumentMatchers.eq(existingId), ArgumentMatchers.any())).thenReturn(productDTO);
+		Mockito.when(service.update(ArgumentMatchers.eq(existingId), ArgumentMatchers.any())).thenReturn(categoryDTO);
 		Mockito.when(service.update(ArgumentMatchers.eq(nonExistingId), ArgumentMatchers.any())).thenThrow(ResourceNotFoundException.class);
 		
 		doNothing().when(service).delete(existingId);
@@ -79,10 +79,10 @@ public class ProductResourceTests {
 	}
 
 	@Test
-	public void findAllShouldReturnPageProductDTO() throws Exception {
+	public void findAllShouldReturnPageCategoryDTO() throws Exception {
 		// Arrange
 		// Acting
-		ResultActions result = mockMvc.perform(get("/products")
+		ResultActions result = mockMvc.perform(get("/categories")
 				.accept(MediaType.APPLICATION_JSON));
 		// Assert
 		result.andExpect(status().isOk());
@@ -90,10 +90,10 @@ public class ProductResourceTests {
 	}
 
 	@Test
-	public void findByIdShouldReturnProductDTOWhenIdExists() throws Exception {
+	public void findByIdShouldReturnCategoryDTOWhenIdExists() throws Exception {
 		// Arrange
 		// Acting
-		ResultActions result = mockMvc.perform(get("/products/{id}", existingId)
+		ResultActions result = mockMvc.perform(get("/categories/{id}", existingId)
 				.accept(MediaType.APPLICATION_JSON));
 		// Assert
 		result.andExpect(status().isOk());
@@ -106,7 +106,7 @@ public class ProductResourceTests {
 	public void findByIdShouldReturnNotFoundWhenIdDoesExist() throws Exception {
 		// Arrange
 		// Acting
-		ResultActions result = mockMvc.perform(get("/products/{id}", nonExistingId)
+		ResultActions result = mockMvc.perform(get("/categories/{id}", nonExistingId)
 				.accept(MediaType.APPLICATION_JSON));
 		// Assert
 		result.andExpect(status().isNotFound());
@@ -114,11 +114,11 @@ public class ProductResourceTests {
 	}
 	
 	@Test
-	public void insertShouldReturnProductDTOAndCreated() throws Exception {
+	public void insertShouldReturnCategoryDTOAndCreated() throws Exception {
 		// Arrange
-		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		String jsonBody = objectMapper.writeValueAsString(categoryDTO);
 		// Acting
-		ResultActions result = mockMvc.perform(post("/products")
+		ResultActions result = mockMvc.perform(post("/categories")
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON));
@@ -128,13 +128,13 @@ public class ProductResourceTests {
 		result.andExpect(jsonPath("$.name").exists());
 		Mockito.verify(service, Mockito.times(1)).insert(any());
 	}
-	
+
 	@Test
-	public void updateShouldReturnProductDTOWhenIdExists() throws Exception {
+	public void updateShouldReturnCategoryDTOWhenIdExists() throws Exception {
 		// Arrange
-		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		String jsonBody = objectMapper.writeValueAsString(categoryDTO);
 		// Acting
-		ResultActions result = mockMvc.perform(put("/products/{id}", existingId)
+		ResultActions result = mockMvc.perform(put("/categories/{id}", existingId)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON));
@@ -148,9 +148,9 @@ public class ProductResourceTests {
 	@Test
 	public void updateShouldReturnNotFoundWhenIdDoesExist() throws Exception {
 		// Arrange
-		String jsonBody = objectMapper.writeValueAsString(productDTO);
+		String jsonBody = objectMapper.writeValueAsString(categoryDTO);
 		// Acting
-		ResultActions result = mockMvc.perform(put("/products/{id}", nonExistingId)
+		ResultActions result = mockMvc.perform(put("/categories/{id}", nonExistingId)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON));
@@ -163,7 +163,7 @@ public class ProductResourceTests {
 	public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
 		// Arrange
 		// Acting
-		ResultActions result = mockMvc.perform(delete("/products/{id}", existingId)
+		ResultActions result = mockMvc.perform(delete("/categories/{id}", existingId)
 				.accept(MediaType.APPLICATION_JSON));
 		// Assert
 		result.andExpect(status().isNoContent());
@@ -174,7 +174,7 @@ public class ProductResourceTests {
 	public void deleteShouldReturnNoFoundWhenIdDoesNotExist() throws Exception {
 		// Arrange
 		// Acting
-		ResultActions result = mockMvc.perform(delete("/products/{id}", nonExistingId)
+		ResultActions result = mockMvc.perform(delete("/categories/{id}", nonExistingId)
 				.accept(MediaType.APPLICATION_JSON));
 		// Assert
 		result.andExpect(status().isNotFound());
